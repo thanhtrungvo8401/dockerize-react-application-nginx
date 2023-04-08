@@ -58,4 +58,4 @@ app.put("/update/:bookId", (req, res) => {
   })
 });
 
-app.listen('3001', () => { console.info("SERVER STARTED SUCCESSFULLY") });
+app.listen(process.env.PORT, () => { console.info(`SERVER STARTED SUCCESSFULLY on ${process.env.PORT}`) });
