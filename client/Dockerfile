@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm i
-COPY ./ ./
+COPY . .
+RUN npm run build
+RUN npm install -g serve
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["serve", "-s", "build", "-l", "3000"]

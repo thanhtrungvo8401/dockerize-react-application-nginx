@@ -59,7 +59,7 @@ class App extends Component {
   }
 
   render() {
-    let card = this.state.fetchData.map((val, key) => {
+    let card = this.state?.fetchData?.map?.((val, key) => {
         return (
             <React.Fragment>
                 <Card style={{ width: '18rem' }} className='m-2'>
@@ -79,7 +79,7 @@ class App extends Component {
   
     return (
         <div className='App'>
-            <h1>Dockerized Fullstack React Application</h1>
+            <h1>Dockerized Fullstack React Application -- {process.env.REACT_APP_NOT_SECRET_CODE}</h1>
             <div className='form'>
                 <input name='setBookName' placeholder='Enter Book Name' onChange={this.handleChange} />
                 <input name='setReview' placeholder='Enter Review' onChange={this.handleChange} />

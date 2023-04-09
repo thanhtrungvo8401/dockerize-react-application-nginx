@@ -1,29 +1,22 @@
 version: '3.8'
 
-x-common-variables: &common-variables
-  MYSQL_DATABASE: books
-  MYSQL_USER: MYSQL_USER
-  MYSQL_PASSWORD: MYSQL_PASSWORD
-
 services:
-  mysql_db:
+  mysql_db_prod:
     image: mysql
     restart: always
     cap_add:
       - SYS_NICE
     volumes:
       - "./setup.sql:/docker-entrypoint-initdb.d/setup.sql"
+    env_file:
+      - ./server/.env
     ports:
       - "9906:3306"
-    environment:
-      <<: *common-variables
-      MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
-      MYSQL_HOST: localhost
   
-  nginx:
+  nginx_prod:
     depends_on:
-      - api
-      - client
+      - api_prod
+      - client_prod
     restart: always
     build:
       dockerfile: Dockerfile
@@ -31,36 +24,30 @@ services:
     ports:
       - 80:80
   
-  api:
+  api_prod:
     build:
       dockerfile: Dockerfile
       context: "./server"
     depends_on:
-      - mysql_db
-    volumes:
-      - /app/node_modules
-      - ./server:/app
-    environment:
-      <<: *common-variables
-      MYSQL_HOST_IP: mysql_db
+      - mysql_db_prod
+    env_file:
+      - ./server/.env
   
-  client:
-    stdin_open: true
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+  client_prod:
     build:
       dockerfile: Dockerfile
       context: ./client
-    volumes:
-      - /app/node_modules
-      - ./client:/app
+    env_file:
+      - ./client/.env
+    ports:
+      - 3000:3000
 
-  adminer:
+  adminer_prod:
     image: adminer:latest
     restart: unless-stopped
     ports:
-      - 8000:8080
+      - 8080:8080
     depends_on:
-      - mysql_db
+      - mysql_db_prod
     environment:
-      ADMINER_DEFAULT_SERVER: mysql_db
+      ADMINER_DEFAULT_SERVER: mysql_db_prod
